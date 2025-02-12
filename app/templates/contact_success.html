@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Takk for at du tar kontakt!{% endblock %}
+{% block content %}
+  <div class="container mx-auto px-4 py-12">
+    <!-- Hero Section -->
+    <div class="relative mb-12 text-center">
+      <h1 class="text-3xl font-bold tracking-tight text-[var(--primary-text)]">Takk for meldinga!</h1>
+      <div class="w-24 h-1 bg-[var(--primary-accent)] mx-auto rounded-full mt-2"></div>
+    </div>
+    <!-- Message Section -->
+    <div class="bg-[var(--secondary-background)] p-6 rounded-lg shadow-lg mt-6 text-center">
+      <p class="text-lg text-[var(--primary-text)]">
+        Beskjeden er mottatt og svar kjem nok snart.
+        <br>
+        <br>
+        <span class="large-icon">🤝</span> <!-- Use a class to control the size -->
+        <br>
+        <br>
+        Takk skal du ha!
+      </p>
+    </div>
+    <style>
+  .large-icon {
+    font-size: 3rem; /* Adjust the size as needed */
+  }
+    </style>
+  </div>
+{% endblock %}

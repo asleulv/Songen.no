@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block title %}Lenker{% endblock title %} {% block content %}
+<div class="container mx-auto px-4 py-12">
+  <!-- Hero Section -->
+  <div class="relative mb-12 text-center">
+    <h1 class="text-2xl font-bold tracking-tight text-[var(--primary-text)]">
+      Lenker
+    </h1>
+    <div
+      class="w-24 h-1 bg-[var(--primary-accent)] mx-auto rounded-full mt-2"
+    ></div>
+  </div>
+
+  <!-- Links Section -->
+  <div
+    class="max-w-4xl mx-auto bg-[var(--secondary-background)] p-6 rounded-lg shadow-lg mt-6"
+  >
+    {% for link in sitelinks %}
+    <div class="mb-6 border-b border-[var(--light-border)] pb-4">
+      <h2 class="text-[var(--secondary-accent)] text-2xl font-semibold">
+        <a
+          href="{{ link.url }}"
+          class="text-[var(--primary-accent)] hover:underline"
+        >
+          {{ link.name }}
+        </a>
+      </h2>
+      <p class="text-[var(--primary-text)] mt-2">{{ link.description }}</p>
+    </div>
+    {% empty %}
+    <p class="text-[var(--primary-text)]">Ingen lenker tilgjengelig.</p>
+    {% endfor %}
+    <div class="text-center">
+      <a href="{% url 'contact' %}" class="text-[var(--secondary-accent)] hover:underline">
+        Tips til andre musikkrelaterte nettsider som bør med?
+      </a>
+    </div>
+  </div>
+
+  {% endblock content %}
+</div>

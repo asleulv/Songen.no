@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block title %}Songen.no - Databasen{% endblock title %}
+{% block content %}
+    <div class="container mx-auto px-4 py-12">
+        <div class="relative mb-6 text-center">
+            <h1 id="record-count"
+                class="text-2xl font-bold tracking-tight text-[var(--primary-text)]">
+                {{ total_musicians }} favorittsongar
+            </h1>
+            <div class="w-24 h-1 bg-[var(--primary-accent)] mx-auto mt-2"></div>
+        </div>
+        <!-- Search Input -->
+        <div class="mb-6 flex justify-center relative w-full md:w-1/3 mx-auto">
+            <input type="text"
+                   id="search-input"
+                   name="search"
+                   placeholder="person / artist / gruppe"
+                   class="w-full px-4 py-2 pr-10 text-[var(--primary-text)] bg-[var(--secondary-background)] border border-[var(--secondary-accent)] shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] rounded-md"
+                   value="{{ request.GET.search|default:'' }}">
+            <!-- Clear Button -->
+            <button id="clear-search"
+                    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-2xl w-10 h-10 flex items-center justify-center text-[var(--primary-text)] hover:text-[var(--primary-accent)] transition-colors duration-300 opacity-0 pointer-events-none"
+                    aria-label="Clear search">
+                &times; <!-- "X" symbol -->
+            </button>
+        </div>
+        <!-- Musicians Table -->
+        <div class="overflow-x-auto bg-[var(--primary-background)] rounded-lg shadow-md">
+            <table id="musicians-table"
+                   class="w-full table-auto text-sm text-[var(--primary-text)]">
+                <thead>
+                    <tr class="bg-[var(--primary-background)] text-left text-[var(--primary-text)]">
+                        <th class="px-6 py-3 cursor-pointer" id="name-header">
+                            Namn <span id="name-sort-icon">▲</span>
+                        </th>
+                        <th class="px-6 py-3 hidden md:table-cell cursor-pointer"
+                            id="project-header">
+                            Prosjekt <span id="project-sort-icon">▲</span>
+                        </th>
+                        <th class="px-6 py-3 hidden md:table-cell cursor-pointer"
+                            id="date-header">
+                            Dato <span id="date-sort-icon">▲</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for musician in musicians %}
+                        <tr class="musician-row border-t border-[var(--light-border)] hover:bg-[var(--secondary-background)]">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3 rounded-full bg-[var(--primary-accent)] mr-2"></span>
+                                    <a href="{{ musician.song.get_absolute_url }}"
+                                       class="text-[var(--primary-text)] hover:text-[var(--primary-accent)] uppercase font-semibold tracking-wide focus:outline-none">
+                                        {{ musician.name }}
+                                    </a>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 hidden md:table-cell">
+                                {% for band in musician.bands.all %}
+                                    <span class="inline-block px-2 py-1 text-xs font-medium bg-[var(--secondary-background)]">
+                                        <a href="/liste/?search={{ band.name|urlencode }}"
+                                           class="text-[var(--primary-accent)] font-medium hover:text-[var(--secondary-accent)] transition duration-200">
+                                            {{ band.name|upper }}
+                                        </a>
+                                    </span>
+                                    {% if not forloop.last %}{% endif %}
+                                {% empty %}
+                                {% endfor %}
+                            </td>
+                            <td class="px-6 py-4 hidden md:table-cell">
+                                {% if musician.song %}
+                                    <span class="text-[var(--primary-text)]">{{ musician.song.created_at|date:"d.m.Y" }}</span>
+                                {% else %}
+                                    <span class="text-gray-400 italic">Dato utilgjengelig</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center text-gray-600 py-4">Ingen treff</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <!-- No Results Message -->
+            <div id="no-results" class="hidden text-center text-gray-600 py-4">Ingen treff</div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('search-input');
+            const musicianRows = document.querySelectorAll('.musician-row');
+            const noResultsMessage = document.getElementById('no-results');
+            const clearButton = document.getElementById('clear-search');
+            const recordCount = document.getElementById('record-count');
+            const nameHeader = document.getElementById('name-header');
+            const projectHeader = document.getElementById('project-header');
+            const dateHeader = document.getElementById('date-header');
+            const nameSortIcon = document.getElementById('name-sort-icon');
+            const projectSortIcon = document.getElementById('project-sort-icon');
+            const dateSortIcon = document.getElementById('date-sort-icon');
+        
+            let currentSort = {
+                column: '',
+                direction: 'asc', // 'asc' or 'desc'
+            };
+        
+            // Function to sort the table
+            function sortTable(column, rows) {
+                const sortedRows = [...rows].sort((a, b) => {
+                    const cellA = a.querySelector(`td:nth-child(${column})`).textContent.trim().toLowerCase();
+                    const cellB = b.querySelector(`td:nth-child(${column})`).textContent.trim().toLowerCase();
+        
+                    if (column === 3) { // Date column (if necessary)
+                        const dateA = new Date(cellA);
+                        const dateB = new Date(cellB);
+                        return currentSort.direction === 'asc' ? dateA - dateB : dateB - dateA;
+                    } else {
+                        return currentSort.direction === 'asc'
+                            ? cellA.localeCompare(cellB)
+                            : cellB.localeCompare(cellA);
+                    }
+                });
+        
+                rows.forEach(row => row.remove()); // Remove existing rows
+                sortedRows.forEach(row => document.querySelector('tbody').appendChild(row)); // Append sorted rows
+            }
+        
+            // Function to handle sorting
+            function handleSort(columnIndex, sortIcon, rows) {
+                // Toggle sort direction
+                if (currentSort.column === columnIndex) {
+                    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.column = columnIndex;
+                    currentSort.direction = 'asc';
+                }
+        
+                // Update sort icon
+                resetSortIcons();
+                sortIcon.textContent = currentSort.direction === 'asc' ? '▲' : '▼';
+        
+                sortTable(columnIndex, rows);
+            }
+        
+            // Function to reset all sort icons
+            function resetSortIcons() {
+                nameSortIcon.textContent = '▲';
+                projectSortIcon.textContent = '▲';
+                dateSortIcon.textContent = '▲';
+            }
+        
+            // Event listeners for column headers
+            nameHeader.addEventListener('click', function () {
+                handleSort(1, nameSortIcon, musicianRows); // Name column
+            });
+        
+            projectHeader.addEventListener('click', function () {
+                handleSort(2, projectSortIcon, musicianRows); // Project column
+            });
+        
+            dateHeader.addEventListener('click', function () {
+                handleSort(3, dateSortIcon, musicianRows); // Date column
+            });
+        
+            // Filter and search functionality (unchanged)
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param) || '';
+            }
+        
+            function filterTable(searchTerm) {
+                let visibleRowCount = 0;
+                musicianRows.forEach(row => {
+                    const name = row.querySelector('a').textContent.toLowerCase();
+                    const bands = row.querySelector('.hidden.md\\:table-cell')?.textContent.toLowerCase() || '';
+        
+                    if (name.includes(searchTerm) || bands.includes(searchTerm)) {
+                        row.style.display = '';
+                        visibleRowCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+        
+                const songText = visibleRowCount === 1 ? 'favorittsong' : 'favorittsongar';
+                recordCount.innerHTML = `${visibleRowCount}<span class="text-[var(--primary-accent)]"> ${songText}</span>`;
+                noResultsMessage.classList.toggle('hidden', visibleRowCount > 0);
+            }
+        
+            function updateUrl(searchTerm) {
+                const newUrl = new URL(window.location);
+                if (searchTerm) {
+                    newUrl.searchParams.set('search', searchTerm);
+                } else {
+                    newUrl.searchParams.delete('search');
+                }
+                window.history.replaceState({}, '', newUrl);
+            }
+        
+            function toggleClearButton() {
+                if (searchInput.value.trim() !== '') {
+                    clearButton.classList.remove('opacity-0', 'pointer-events-none');
+                } else {
+                    clearButton.classList.add('opacity-0', 'pointer-events-none');
+                }
+            }
+        
+            const searchQuery = getQueryParam('search').toLowerCase().trim();
+            if (searchQuery) {
+                searchInput.value = searchQuery;
+                filterTable(searchQuery);
+                toggleClearButton();
+            }
+        
+            searchInput.addEventListener('input', function () {
+                const searchTerm = this.value.toLowerCase().trim();
+                filterTable(searchTerm);
+                updateUrl(searchTerm);
+                toggleClearButton();
+            });
+        
+            clearButton.addEventListener('click', function () {
+                searchInput.value = '';
+                updateUrl('');
+                window.location.href = window.location.pathname;
+            });
+        });
+        
+    </script>
+{% endblock content %}

@@ -1,0 +1,47 @@
+
+:root {
+    --primary-background: #fcfcfc; 
+    --secondary-background: #f2f2f2; 
+    --contrast-background: #e7e4e4;
+    --primary-accent: #5DA8D9; 
+    --secondary-accent: #3E7A9E;
+    --primary-text: #292929;
+    --light-text: #727272;
+    --highlighted-text: #ffffff; 
+    --light-border: #ededed;
+    --smooth-gray: #9c9c9c;
+    --photo-credit: #9d9d9d;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+    --primary-background: #121212; 
+    --secondary-background: #1a1a1a; 
+    --contrast-background: #272727;
+    --primary-accent: #5DA8D9; 
+    --secondary-accent: #3E7A9E; 
+    --primary-text: #e0e0e0; 
+    --light-text: #bdbdbd;
+    --highlighted-text: #ffffff; 
+    --light-border: #232323;
+    --smooth-gray: #d7d7d7;
+    --photo-credit: #9d9d9d;
+}
+
+/* Smooth transition for background and text color */
+html, body {
+    background: var(--primary-background); /* Your main background */
+    color: var(--primary-text);
+    position: relative;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark corners effect */
+body::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.012) 50%, rgba(0, 0, 0, 0.1) 100%);
+    pointer-events: none; /* Ensures it doesn't interfere with interaction */
+}
+

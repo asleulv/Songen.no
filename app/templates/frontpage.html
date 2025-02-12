@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Velkommen til Favorittsanger{% endblock title %}
+{% block content %}
+  <div class="container mx-auto px-4 py-12">
+    <!-- Hero Section -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-[var(--light-text)] mb-4">
+        Den eine <span class="text-[var(--secondary-accent)]">songen..</span>
+      </h1>
+      <div class="w-24 h-1.5 bg-[var(--secondary-accent)] mx-auto mb-6"></div>
+      <p class="text-xl text-[var(--light-text)] max-w-2xl mx-auto leading-relaxed">
+        Me ber folk innan norsk musikk om å trekke fram <span class="text-[var(--primary-accent)] font-bold">ein</span> song dei elskar. Enkelt og greitt, men samtidig utruleg vanskeleg...
+      </p>
+    </div>
+    <!-- Musician Info -->
+    <div class="max-w-6xl mx-auto p-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for song in page_obj %}
+          {% if song.musician and song.musician.picture %}
+            <a href="{{ song.get_absolute_url }}"
+               class="block overflow-hidden rounded-lg shadow-lg transform transition duration-300">
+              <div class="relative w-full h-80 group">
+                <!-- Background Image -->
+                <img src="{{ song.musician.picture.url }}"
+                     alt="{{ song.musician.name }}"
+                     class="w-full h-full object-cover absolute inset-0 group-hover:brightness-110 transition duration-300">
+                <!-- Gradient Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/100 via-black/50 to-transparent"></div>
+                <!-- Text Content -->
+                <div class="absolute inset-0 flex flex-col justify-end items-center p-6 text-[var(--highlighted-text)] z-10">
+                  <h3 class="text-2xl font-bold text-center">{{ song.musician.name }}</h3>
+                  <!-- Musician's Bands -->
+                  {% if song.musician.bands.all %}
+                    <p class="text-[var(--primary-text)] text-sm mt-1 opacity-100 text-center flex flex-wrap gap-1">
+                      {% for band in song.musician.bands.all %}
+                        <span class="inline-block px-2 py-1 text-xs font-medium {% if forloop.counter|divisibleby:2 %} bg-[var(--primary-background)]  {% else %} bg-[var(--contrast-background)]  {% endif %}">
+                          {{ band.name|upper }}
+                        </span>
+                      {% endfor %}
+                    </p>
+                  {% endif %}
+                  {% if song.musician.picture_credit %}
+                    <p class="text-xs mt-2 text-[var(--photo-credit)]">Foto: {{ song.musician.picture_credit }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          {% endif %}
+        {% empty %}
+          <p class="text-gray-600 italic text-center col-span-3">Ingen sanger er lagt til enno.</p>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- See More Button -->
+    {% if page_obj.has_next %}
+      <div class="text-center mt-6">
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="text-[var(--primary-text)] hover:text-[var(--highlighted-text)] bg-[var(--contrast-background)] px-4 py-2 rounded-full hover:bg-[var(--secondary-accent)] transition duration-300">
+          Fleire!
+        </a>
+      </div>
+    {% endif %}
+  </div>
+{% endblock content %}

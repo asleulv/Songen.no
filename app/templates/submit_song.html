@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}
+  {{ musician.name }} sin favorittsong
+{% endblock title %}
+{% block content %}
+  <div class="container mx-auto px-4 py-12">
+    <!-- Hero Section -->
+    <div class="relative mb-12 text-center">
+      <h1 class="text-3xl font-bold tracking-tight text-[var(--primary-text)]">
+        {{ form.name.value }}<span class="text-[var(--primary-accent)]">sin favorittsong</span>
+      </h1>
+      <div class="w-24 h-1 bg-[var(--primary-accent)] mx-auto rounded-full mt-2"></div>
+    </div>
+    <!-- Musician's Picture Section -->
+    {% if musician.picture %}
+      <div class="text-center">
+        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-[var(--primary-accent)] shadow-lg mx-auto">
+          <img src="{{ musician.picture.url }}"
+               alt="{{ musician.name }}"
+               class="w-full h-full object-cover" />
+        </div>
+      </div>
+    {% endif %}
+    {% if musician.bands.all %}
+      <div class="text-center mt-3 mb-4 text-md text-[var(--primary-text)]">
+        <strong>Band-/artisthistorikk:</strong>
+        {{ musician.bands.all|join:", " }}
+      </div>
+    {% endif %}
+    <!-- Form Section -->
+    <form method="post"
+          class="space-y-6 bg-[var(--secondary-background)]  p-8 rounded-lg shadow-lg">
+      {% csrf_token %}
+      <!-- Hidden field for musician -->
+      <input type="hidden" name="musician" value="{{ form.musician.value }}" />
+      <div class="flex items-center my-6">
+        <hr class="flex-1 border-t border-[var(--light-border)]" />
+        <span class="mx-4 text-lg font-semibold text-[var(--primary-text)] ">👇 Om deg</span>
+        <hr class="flex-1 border-t border-[var(--light-border)]" />
+      </div>
+      <!-- Info Box with text above the name -->
+      <div class="bg-[var(--primary-background)] border-l-4 border-[var(--secondary-accent)] p-4 my-6">
+        <p class="text-sm text-[var(--primary-text)] ">
+          Fint om du ser over om namn/mini-bio ser riktig ut og eventuelt justerer
+        </p>
+      </div>
+      <!-- Name field -->
+      <div class="flex flex-col">
+        <label for="name" class="text-md font-medium text-[var(--primary-text)]">Namn</label>
+        <input type="text"
+               name="name"
+               value="{{ form.name.value }}"
+               class="w-full p-3 bg-[var(--primary-background)] border border-[var(--secondary-accent)] rounded-md text-[var(--primary-text)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:outline-none" />
+        {% if form.name.errors %}
+          <div class="text-red-600 text-sm mt-1">
+            {% for error in form.name.errors %}<p>{{ error }}</p>{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <!-- Bio field -->
+      <div class="flex flex-col">
+        <label for="name" class="text-md font-medium text-[var(--primary-text)]">Mini-bio</label>
+        <textarea name="bio" class="w-full p-3 bg-[var(--primary-background)] border border-[var(--secondary-accent)] rounded-md text-[var(--primary-text)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:outline-none">
+{{ form.bio.value }}</textarea>
+        {% if form.bio.errors %}
+          <div class="text-red-600 text-sm mt-1">
+            {% for error in form.bio.errors %}<p>{{ error }}</p>{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="flex items-center mt-10">
+        <hr class="flex-1 border-t border-[var(--light-border)]" />
+        <span class="mx-4 text-lg font-semibold text-[var(--primary-text)] ">👇 Om favorittsongen din</span>
+        <hr class="flex-1 border-t border-[var(--light-border)]" />
+      </div>
+      <!-- Song Title field -->
+      <div class="flex flex-col">
+        <label for="name" class="text-md font-medium text-[var(--primary-text)]">Favorittsong (tittel)</label>
+        <input type="text"
+               name="song_title"
+               value="{{ form.song_title.value }}"
+               class="w-full p-3 bg-[var(--primary-background)] border border-[var(--secondary-accent)] rounded-md text-[var(--primary-text)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:outline-none"
+               placeholder="Til dømes: California Girls" />
+        {% if form.song_title.errors %}
+          <div class="text-red-600 text-sm mt-1">
+            {% for error in form.song_title.errors %}<p>{{ error }}</p>{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <!-- Song Artist field -->
+      <div class="flex flex-col">
+        <label for="name" class="text-md font-medium text-[var(--primary-text)]">Favorittsong (artist)</label>
+        <input type="text"
+               name="song_artist"
+               value="{{ form.song_artist.value }}"
+               class="w-full p-3 bg-[var(--primary-background)] border border-[var(--secondary-accent)] rounded-md text-[var(--primary-text)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:outline-none"
+               placeholder="Til dømes: The Beach Boys" />
+        {% if form.song_artist.errors %}
+          <div class="text-red-600 text-sm mt-1">
+            {% for error in form.song_artist.errors %}<p>{{ error }}</p>{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <!-- Reasoning field -->
+      <div class="flex flex-col">
+        <label for="name" class="text-md font-medium text-[var(--primary-text)]">Kvifor likar du denne songen så godt?</label>
+        <textarea name="reasoning"
+                  class="w-full p-3 bg-[var(--primary-background)] border border-[var(--secondary-accent)] rounded-md text-[var(--primary-text)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:outline-none"
+                  placeholder="Anbefalt lengde: 1-5 setningar...">{{ form.reasoning.value }}</textarea>
+        {% if form.reasoning.errors %}
+          <div class="text-red-600 text-sm mt-1">
+            {% for error in form.reasoning.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <!-- Submit button -->
+      <div class="text-center">
+        <button type="submit"
+                class="w-full py-3 bg-[var(--primary-accent)] text-white font-semibold rounded-lg hover:bg-[var(--primary-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:ring-opacity-50">
+          Send inn
+        </button>
+      </div>
+    </form>
+  </div>
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+    form.addEventListener("submit", function (event) {
+      let isValid = true;
+      const songTitle = document.querySelector("input[name='song_title']");
+      const songArtist = document.querySelector("input[name='song_artist']");
+      const reasoning = document.querySelector("textarea[name='reasoning']");
+
+      const fields = [songTitle, songArtist, reasoning];
+
+      fields.forEach((field) => {
+        if (field.value.trim() === "") {
+          isValid = false;
+          field.classList.add("border-red-500"); // Highlight empty fields
+          if (!field.nextElementSibling || !field.nextElementSibling.classList.contains("error-message")) {
+            const errorMsg = document.createElement("p");
+            errorMsg.textContent = "Dette feltet må fyllast ut";
+            errorMsg.classList.add("text-red-600", "text-sm", "mt-1", "error-message");
+            field.parentNode.appendChild(errorMsg);
+          }
+        } else {
+          field.classList.remove("border-red-500");
+          if (field.nextElementSibling && field.nextElementSibling.classList.contains("error-message")) {
+            field.nextElementSibling.remove();
+          }
+        }
+      });
+
+      if (!isValid) {
+        event.preventDefault(); // Prevent form submission
+      }
+    });
+  });
+  </script>
+{% endblock content %}

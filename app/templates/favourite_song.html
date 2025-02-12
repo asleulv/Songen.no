@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}
+  {{ musician.name }} sin
+  favorittsong
+{% endblock title %}
+{% block head %}
+  <meta name="description"
+        content="Kva er favorittsongen til {{ musician.name }} sin favorittsong er {{ favorite_song.title }} av {{ favorite_song.artist }}.">
+  <meta property="og:title" content="{{ musician.name }} sin favorittsong">
+  <meta property="og:description"
+        content="{{ musician.name }} sin favorittsong er {{ favorite_song.title }} av {{ favorite_song.artist }}.">
+  {% if musician.picture %}
+    <meta property="og:image"
+          content="{{ request.scheme }}://{{ request.get_host }}{{ musician.picture.url }}">
+  {% endif %}
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta name="twitter:card" content="summary_large_image">
+{% endblock head %}
+{% block content %}
+  <div class="container mx-auto px-4 py-12">
+    <!-- Hero Section -->
+    <div class="relative mb-6 text-center">
+      <h1 class="text-2xl font-bold tracking-tight text-[var(--light-text)]">
+        {{ favorite_song.musician }}<span class="text-[var(--primary-accent)]">sin favorittsong</span>
+      </h1>
+      <div class="w-24 h-1 bg-[var(--primary-accent)] mx-auto mt-2"></div>
+    </div>
+    <div class="flex justify-center mt-4">
+      <button id="copyLinkBtn"
+              class="px-6 py-2 text-[var(--primary-text)] border-2 border-[var(--secondary-background)] rounded-full hover:bg-[var(--secondary-background)] transition duration-300 ease-in-out">
+        🔗 Kopier lenke
+      </button>
+    </div>
+    <span id="copySuccess"
+          class="block text-center text-[var(--primary-accent)] font-medium mt-2 hidden">✔ Lenke kopiert!</span>
+    <!-- Favourite Song Card -->
+    <div class="bg-gradient-to-br from-[var(--secondary-background)] to-transparent shadow-xl max-w-4xl mx-auto mt-6 mb-12 overflow-hidden">
+      <div class="flex flex-col lg:flex-row">
+        <!-- Text Content First -->
+        <div class="p-8 text-center {% if favorite_song.image %}lg:w-3/5{% else %}w-full{% endif %}">
+          <h2 class="text-3xl font-bold leading-snug">
+            <span class="text-[var(--secondary-accent)]">{{ favorite_song.artist }}</span>
+            <span class="text-[var(--primary-accent)]">- {{ favorite_song.title }}</span>
+          </h2>
+          <div class="text-[var(--light-text)] text-sm flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-3 mt-2 text-center sm:text-left">
+            {% if favorite_song.year %}
+              <span class="font-medium italic">Utgitt <span class="font-semibold">{{ favorite_song.year }}</span></span>
+            {% endif %}
+            {% if favorite_song.year and favorite_song.album %}
+              <span class="hidden sm:inline text-gray-400">•</span> <!-- Hide bullet on mobile -->
+            {% endif %}
+            {% if favorite_song.album %}
+              <span class="italic">
+                Frå albumet <span class="font-semibold">{{ favorite_song.album }}</span>
+              </span>
+            {% endif %}
+          </div>
+          {% if favorite_song.text %}
+            <div class="mt-6">
+              <blockquote class="border-l-4 border-[var(--primary-accent)] italic text-xl text-[var(--light-text)] p-5 mx-auto max-w-lg">
+                "{{ favorite_song.text }}"
+              </blockquote>
+            </div>
+          {% endif %}
+          <div class="mt-6">
+            <ul class="flex flex-wrap justify-center gap-3">
+              {% for link in streaming_links %}
+                <li>
+                  <a href="{{ link.url }}"
+                     class="px-3 py-2 rounded-full bg-[var(--contrast-background)] text-[var(--light-text)] hover:bg-[var(--secondary-accent)] hover:text-[var(--highlighted-text)] transition duration-200 block text-center"
+                     target="_blank">
+                    <span>{{ link.name }}</span> <!-- Display the name instead of platform -->
+                  </a>
+                </li>
+              {% empty %}
+                <li class="text-gray-600 italic">Ingen streaming-lenker tilgjengeleg</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <!-- Image Below on Small Screens, Side-by-Side on Large Screens -->
+        {% if favorite_song.image %}
+          <div class="lg:w-2/5 bg-[var(--secondary-background)] p-6 flex items-center justify-center">
+            <img src="{{ favorite_song.image.url }}"
+                 alt="{{ favorite_song.title }}"
+                 class="w-full rounded-lg shadow-md" />
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <!-- Musician Info Box -->
+  <div class="p-6 max-w-4xl mx-auto mt-2">
+    <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+      <!-- Musician Image + Picture Credit -->
+      <div class="relative text-center">
+        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-[var(--secondary-accent)] shadow-lg">
+          <img src="{{ musician.picture.url }}"
+               alt="{{ musician.name }}"
+               class="w-full h-full object-cover" />
+        </div>
+        {% if musician.picture_credit %}
+          <p class="text-xs text-gray-500 mt-2 w-32 break-words">Foto: {{ musician.picture_credit }}</p>
+        {% endif %}
+      </div>
+      <div class="text-center md:text-left flex-1">
+        <h2 class="text-xl font-bold text-[var(--light-text)] mb-2">{{ musician.name }}</h2>
+        {% if bands %}
+          <div class="flex items-center gap-3 text-[var(--primary-text)] text-sm mb-2">
+            <ul class="flex flex-wrap gap-3">
+              {% for band in bands %}
+                <li>
+                  <span class="inline-block px-2 py-1 text-xs font-medium bg-[var(--secondary-background)]">
+                    <a href="/liste/?search={{ band.name|urlencode }}"
+                       class="text-[var(--primary-accent)] font-medium hover:text-[var(--secondary-accent)] transition duration-200">
+                      {{ band.name|upper }}
+                    </a>
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+        {% if musician.bio %}<p class="text-[var(--light-text)] mt-2 leading-relaxed">{{ musician.bio }}</p>{% endif %}
+        <!-- Social Media Links -->
+        <div class="mt-4">
+          {% if social_links %}
+            <ul class="flex flex-wrap justify-center md:justify-start gap-3 text-sm">
+              {% for social in social_links %}
+                <li>
+                  <a href="{{ social.url }}"
+                     class="text-[var(--primary-accent)] hover:underline transition duration-200"
+                     target="_blank">{{ social.description|title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  document.getElementById("copyLinkBtn").addEventListener("click", function() {
+    const button = this;
+    const originalText = button.innerHTML;
+    const link = "{{ request.scheme }}://{{ request.get_host }}{{ request.path }}";
+
+    navigator.clipboard.writeText(link).then(() => {
+        button.innerHTML = `<span class="text-[var(--primary-accent)]">✔ Lenke kopiert!</span>`;
+        button.disabled = true;
+
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error("Failed to copy:", err);
+    });
+});
+  </script>
+{% endblock content %}

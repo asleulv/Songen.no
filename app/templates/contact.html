@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Om Songen.no{% endblock title %}
+{% block content %}
+  <div class="container mx-auto px-4 py-12">
+    <!-- Hero Section -->
+    <div class="relative mb-6 text-center">
+      <h1 id="record-count"
+          class="text-2xl font-bold tracking-tight text-[var(--primary-text)]">Ta kontakt</h1>
+      <div class="w-24 h-1 bg-[var(--primary-accent)] mx-auto mt-2"></div>
+      <!-- Contact Form Section -->
+      <div class="max-w-4xl text-left mx-auto bg-[var(--secondary-background)] p-6 rounded-lg shadow-lg mt-6">
+        <form method="post">
+          {% csrf_token %}
+          <!-- Name Field -->
+          <div class="flex flex-col mb-4">
+            <label for="name" class="text-md font-medium text-[var(--primary-text)]">Namn</label>
+            <input type="text"
+                   name="name"
+                   value="{{ form.name.value|default:'' }}"
+                   class="w-full p-3 bg-[var(--primary-background)] border border-[var(--secondary-accent)] rounded-md text-[var(--primary-text)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:outline-none"
+                   placeholder="Blackie Lawless" />
+            {% if form.name.errors %}<div class="text-red-600 text-sm mt-1"></div>{% endif %}
+          </div>
+          <!-- Email Field -->
+          <div class="flex flex-col mb-4">
+            <label for="email" class="text-md font-medium text-[var(--primary-text)]">E-post</label>
+            <input type="email"
+                   name="email"
+                   value="{{ form.email.value|default:'' }}"
+                   class="w-full p-3 bg-[var(--primary-background)] border border-[var(--secondary-accent)] rounded-md text-[var(--primary-text)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:outline-none"
+                   placeholder="hello@lionelrichie.com" />
+            {% if form.email.errors %}<div class="text-red-600 text-sm mt-1"></div>{% endif %}
+          </div>
+          <!-- Message Field -->
+          <div class="flex flex-col mb-6">
+            <label for="message" class="text-md font-medium text-[var(--primary-text)]">Melding</label>
+            <textarea name="message"
+                      rows="4"
+                      class="w-full p-3 bg-[var(--primary-background)] border border-[var(--secondary-accent)] rounded-md text-[var(--primary-text)] focus:ring-2 focus:ring-[var(--primary-accent)] focus:outline-none"
+                      placeholder="Den dag kjem aldri at eg deg gløymer...">{{ form.message.value|default:'' }}</textarea>
+            {% if form.message.errors %}
+              <div class="text-red-600 text-sm mt-1"></div>
+            {% endif %}
+          </div>
+          <!-- Submit Button -->
+          <button type="submit"
+                  class="w-full py-3 bg-[var(--secondary-accent)] text-white font-semibold rounded-lg hover:bg-[var(--primary-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-accent)] focus:ring-opacity-50">
+            Send
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+    <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("form");
+    
+    form.addEventListener("submit", function (event) {
+      let isValid = true;
+
+      // Select the form fields
+      const name = document.querySelector("input[name='name']");
+      const email = document.querySelector("input[name='email']");
+      const message = document.querySelector("textarea[name='message']");
+
+      const fields = [name, email, message];
+
+      fields.forEach((field) => {
+        // Check if the field is empty
+        if (field.value.trim() === "") {
+          isValid = false;
+          field.classList.add("border-red-500"); // Highlight empty fields
+          
+          // Add error message if not already present
+          if (!field.nextElementSibling || !field.nextElementSibling.classList.contains("error-message")) {
+            const errorMsg = document.createElement("p");
+            errorMsg.textContent = "Dette feltet må fyllast ut"; // Custom error message
+            errorMsg.classList.add("text-red-600", "text-sm", "mt-1", "error-message");
+            field.parentNode.appendChild(errorMsg);
+          }
+        } else {
+          field.classList.remove("border-red-500"); // Remove highlight if valid
+          
+          // Remove error message if the field is valid
+          if (field.nextElementSibling && field.nextElementSibling.classList.contains("error-message")) {
+            field.nextElementSibling.remove();
+          }
+        }
+      });
+
+      // Prevent form submission if not valid
+      if (!isValid) {
+        event.preventDefault(); 
+      }
+    });
+  });
+    </script>
+  {% endblock content %}

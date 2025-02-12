@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Vilkår for bruk{% endblock %}
+{% block content %}
+  <div class="container mx-auto px-4 py-12">
+    <!-- Hero Section -->
+    <div class="relative mb-12 text-center">
+      <h1 class="text-2xl font-bold tracking-tight text-[var(--primary-text)]">Vilkår for bruk</h1>
+      <div class="w-24 h-1 bg-[var(--primary-accent)] mx-auto rounded-full mt-2"></div>
+    </div>
+    <!-- Terms Section -->
+    <div class="max-w-4xl mx-auto bg-[var(--secondary-background)] p-6 rounded-lg shadow-lg mt-6">
+      <ul class="list-disc pl-5 mt-2 text-[var(--primary-text)]">
+        <li>Alle bilete av bidragsytar er brukt med samtykke ogo fotograf er kredittert etter ønske</li>
+        <li>Mini-biografi er lest gjennom, godkjent og evt korrigert av innsendar</li>
+        <li>
+          Bilete knytta til låt er alltid innan retninglinjene for <i>fornuftig bruk</i> eller utan opphavsrett <i>(public domain)</i>
+        </li>
+      </ul>
+      <p class="mt-6 text-[var(--primary-text)]">
+        Om du ser noko som ikkje stemmer overreins med gjeldande retningslinjer eller ser feil ut er det berre å <a class="text-[var(--secondary-accent)] hover:text-[var(--primary-accent)]"
+    href="/kontakt">ta kontakt.</a>
+      </p>
+    </div>
+  </div>
+  {% endblock content %}
