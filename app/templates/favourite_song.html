@@ -6,9 +6,9 @@
 {% block head %}
   <meta name="description"
         content="Kva er favorittsongen til {{ musician.name }} sin favorittsong er {{ favorite_song.title }} av {{ favorite_song.artist }}.">
-  <meta property="og:title" content="{{ musician.name }} sin favorittsong">
+  <meta property="og:title" content="Songen.no: {{ musician.name }}">
   <meta property="og:description"
-        content="{{ musician.name }} sin favorittsong er {{ favorite_song.title }} av {{ favorite_song.artist }}.">
+        content="Når du må velge berre EIN song...">
   {% if musician.picture %}
     <meta property="og:image"
           content="{{ request.scheme }}://{{ request.get_host }}{{ musician.picture.url }}">
