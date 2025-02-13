@@ -37,7 +37,7 @@ def contact(request):
             message = form.cleaned_data['message']
             
             send_mail(
-                f'Contact form message from {name}',
+                f'Songen.no: Melding frå {name}',
                 message,
                 email,
                 [settings.CONTACT_EMAIL],  
