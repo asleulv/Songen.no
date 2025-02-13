@@ -106,18 +106,21 @@
       <div class="text-center md:text-left flex-1">
         <h2 class="text-xl font-bold text-[var(--light-text)] mb-2">{{ musician.name }}</h2>
         {% if bands %}
-          <div class="flex items-center gap-3 text-[var(--primary-text)] text-sm mb-2">
-            <ul class="flex flex-wrap gap-3">
-              {% for band in bands %}
-                <li>
-                  <span class="inline-block px-2 py-1 text-xs font-medium bg-[var(--secondary-background)]">
-                    <a href="/liste/?search={{ band.name|urlencode }}"
-                       class="text-[var(--primary-accent)] font-medium hover:text-[var(--secondary-accent)] transition duration-200">
-                      {{ band.name|upper }}
-                    </a>
-                  </span>
-                </li>
-              {% endfor %}
+        <div class="flex flex-col items-center md:flex-row md:items-start gap-3 text-[var(--primary-text)] text-sm mb-2">
+          <ul class="flex flex-wrap gap-3 justify-center md:justify-start">
+        
+            {% for band in bands %}
+              <li>
+                <span class="inline-block px-2 py-1 text-xs font-medium bg-[var(--secondary-background)]">
+                  <a href="/liste/?search={{ band.name|urlencode }}"
+                    class="text-[var(--primary-accent)] font-medium hover:text-[var(--secondary-accent)] transition duration-200">
+                    {{ band.name|upper|slice:":40" }}{% if band.name|length > 40 %}...{% endif %}
+                  </a>
+                </span>
+              </li>
+            {% endfor %}
+
+          
             </ul>
           </div>
         {% endif %}
@@ -125,13 +128,16 @@
         <!-- Social Media Links -->
         <div class="mt-4">
           {% if social_links %}
-            <ul class="flex flex-wrap justify-center md:justify-start gap-3 text-sm">
+            <ul class="flex flex-wrap justify-center md:justify-start gap-3 text-md">
               {% for social in social_links %}
-                <li>
-                  <a href="{{ social.url }}"
-                     class="text-[var(--primary-accent)] hover:underline transition duration-200"
-                     target="_blank">{{ social.description|title }}</a>
-                </li>
+              <li>
+                <a href="{{ social.url }}" 
+                   class="text-[var(--secondary-accent)] transition duration-200 flex items-center" 
+                   target="_blank">
+                  <span class="text-[var(--secondary-accent)] mr-1">➜</span>
+                  <span class="hover:text-[var(--primary-accent)]"> {{ social.description|title }}</span>
+                </a>
+              </li>              
               {% endfor %}
             </ul>
           {% endif %}

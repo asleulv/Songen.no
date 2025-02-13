@@ -33,12 +33,20 @@
                   {% if song.musician.bands.all %}
                     <p class="text-[var(--primary-text)] text-sm mt-1 opacity-100 text-center flex flex-wrap gap-1">
                       {% for band in song.musician.bands.all %}
-                        <span class="inline-block px-2 py-1 text-xs font-medium {% if forloop.counter|divisibleby:2 %} bg-[var(--primary-background)]  {% else %} bg-[var(--contrast-background)]  {% endif %}">
-                          {{ band.name|upper }}
-                        </span>
+                        {% if forloop.counter <= 3 %}
+                          <span class="inline-block px-2 py-1 text-xs font-medium whitespace-nowrap {% if forloop.counter|divisibleby:2 %} bg-[var(--primary-background)] {% else %} bg-[var(--contrast-background)] {% endif %}">
+                            {{ band.name|upper|slice:":40" }}{% if band.name|length > 40 %}...{% endif %}
+                          </span>
+                        {% endif %}
                       {% endfor %}
+                      {% if song.musician.bands.all|length > 3 %}
+                        <span class="inline-block px-2 py-1 text-xs font-medium whitespace-nowrap bg-[var(--primary-background)]">
+                          + FLEIRE
+                        </span>
+                      {% endif %}
                     </p>
                   {% endif %}
+
                   {% if song.musician.picture_credit %}
                     <p class="text-xs mt-2 text-[var(--photo-credit)]">Foto: {{ song.musician.picture_credit }}</p>
                   {% endif %}
