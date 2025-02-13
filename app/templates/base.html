@@ -3,6 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="color-scheme" content="dark light">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
       {% block title %}
@@ -11,14 +12,17 @@
     </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      // Default to dark mode unless the user has explicitly chosen light mode
+      // Always default to dark mode if no preference is saved
       const savedDarkMode = localStorage.getItem('dark-mode');
+      if (savedDarkMode === null) {
+          localStorage.setItem('dark-mode', 'true');
+      }
       if (savedDarkMode === null || savedDarkMode === 'true') {
-        document.documentElement.classList.add('dark');
-        document.documentElement.setAttribute('data-theme', 'dark');
+          document.documentElement.classList.add('dark');
+          document.documentElement.setAttribute('data-theme', 'dark');
       } else {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.classList.remove('dark');
+          document.documentElement.setAttribute('data-theme', 'light');
       }
     </script>
     <script>
@@ -58,6 +62,13 @@
     {% endblock head %}
   </head>
   <body class="text-[var(--primary-background)] font-inter min-h-screen flex flex-col">
+    <script>
+      // Prevent flash of light mode
+      if (!localStorage.getItem('dark-mode') || localStorage.getItem('dark-mode') === 'true') {
+          document.documentElement.classList.add('dark');
+          document.documentElement.setAttribute('data-theme', 'dark');
+      }
+  </script>
     <!-- Navbar -->
     <nav class="text-[var(--primary-accent)] border-b border-[var(--light-border)]">
       <div class="container mx-auto px-4">
