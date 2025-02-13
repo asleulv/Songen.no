@@ -36,15 +36,20 @@ def contact(request):
             email = form.cleaned_data['email']
             message = form.cleaned_data['message']
             
+            full_message = f"Namn: {name}\nEpost: {email}\n\nMelding:\n{message}"
+
             send_mail(
                 f'Songen.no: Melding frå {name}',
-                message,
-                email,
+                full_message,
+                settings.DEFAULT_FROM_EMAIL,  # Use your site's email
                 [settings.CONTACT_EMAIL],  
+                fail_silently=False,
             )
             return render(request, 'contact_success.html')  
     else:
         form = ContactForm()
+    
+    return render(request, 'contact.html', {'form': form})
 
     return render(request, 'contact.html', {'form': form})
 

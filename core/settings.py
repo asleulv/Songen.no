@@ -26,6 +26,7 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'  # Convert to boole
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 CONTACT_EMAIL = os.getenv('CONTACT_EMAIL')
+DEFAULT_FROM_EMAIL = 'robot@songen.no'
 
 
 # Application definition
