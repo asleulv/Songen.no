@@ -15,7 +15,7 @@ def frontpage(request):
     return render(request, 'frontpage.html', {'page_obj': page_obj})
 
 def musician_list(request):
-    musicians = Musician.objects.all().order_by('name')
+    musicians = Musician.objects.filter(song__isnull=False).order_by('name')
 
     search_query = request.GET.get('search', '')
     if search_query:
