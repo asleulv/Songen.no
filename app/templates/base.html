@@ -9,14 +9,14 @@
     <meta name="description" content="Når folk innan norsk musikk blir bedne om å trekke fram ein song dei elskar.">
     <meta property="og:title" content="Songen.no - Norske musikarar sine favorittlåtar">
     <meta property="og:description" content="Når folk innan norsk musikk blir bedne om å trekke fram ein song dei elskar.">
-    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/social-preview.jpg' %}">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/songen_fallback.png' %}">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta property="og:type" content="website">
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Songen.no - Norske musikarar sine favorittlåtar">
     <meta name="twitter:description" content="Når folk innan norsk musikk blir bedne om å trekke fram ein song dei elskar.">
-    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/social-preview.jpg' %}">
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/songen_fallback.png' %}">
     <title>
       {% block title %}
         songen.no
