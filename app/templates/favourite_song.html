@@ -5,16 +5,20 @@
 {% endblock title %}
 {% block head %}
   <meta name="description"
-        content="Kva er favorittsongen til {{ musician.name }} sin favorittsong er {{ favorite_song.title }} av {{ favorite_song.artist }}.">
+        content="Når {{ musician.name }} må velge berre EIN song...">
   <meta property="og:title" content="Songen.no: {{ musician.name }}">
   <meta property="og:description"
-        content="Når du må velge berre EIN song...">
+        content="Når {{ musician.name }} må velge berre EIN song...">
   {% if musician.picture %}
     <meta property="og:image"
           content="{{ request.scheme }}://{{ request.get_host }}{{ musician.picture.url }}">
   {% endif %}
   <meta property="og:url" content="{{ request.build_absolute_uri }}">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Songen.no: {{ musician.name }}">
+  <meta name="twitter:description" content="Når {{ musician.name }} må velge berre EIN song...">
+  <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ musician.picture.url }}">
+  <meta name="twitter:image:alt" content="Bilde av {{ musician.name }}">
 {% endblock head %}
 {% block content %}
   <div class="container mx-auto px-4 py-12">

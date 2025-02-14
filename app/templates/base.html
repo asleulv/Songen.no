@@ -5,6 +5,18 @@
     <meta charset="UTF-8" />
     <meta name="color-scheme" content="dark light">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Default meta tags -->
+    <meta name="description" content="Når folk innan norsk musikk blir bedne om å trekke fram ein song dei elskar.">
+    <meta property="og:title" content="Songen.no - Norske musikarar sine favorittlåtar">
+    <meta property="og:description" content="Når folk innan norsk musikk blir bedne om å trekke fram ein song dei elskar.">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/social-preview.jpg' %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Songen.no - Norske musikarar sine favorittlåtar">
+    <meta name="twitter:description" content="Når folk innan norsk musikk blir bedne om å trekke fram ein song dei elskar.">
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/social-preview.jpg' %}">
     <title>
       {% block title %}
         songen.no
@@ -45,7 +57,7 @@
           rel="stylesheet" />
     <!-- Meta-tag for betre synlegheit på nett -->
     <meta name="description"
-          content="Oppdag dine norske favorittmusikarar og songane dei likar best på songen.no" />
+          content="Når folk innan norsk musikk blir bedne om å trekke fram ein song dei elskar." />
     <meta name="keywords"
           content="norsk musikk, favorittsongar, musikarar, Noreg" />
     <!-- Google Analytics -->
