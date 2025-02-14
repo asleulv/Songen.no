@@ -55,18 +55,19 @@
                                     </a>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 hidden md:table-cell">
+                            <td class="px-6 py-4 hidden md:table-cell flex flex-wrap gap-2">
                                 {% for band in musician.bands.all %}
-                                    <span class="inline-block px-2 py-1 text-xs font-medium bg-[var(--secondary-background)]">
+                                    <span class="inline-block px-2 py-1 text-xs font-medium bg-[var(--secondary-background)] mb-2">
                                         <a href="/liste/?search={{ band.name|urlencode }}"
                                            class="text-[var(--primary-accent)] font-medium hover:text-[var(--secondary-accent)] transition duration-200">
                                             {{ band.name|upper }}
                                         </a>
                                     </span>
-                                    {% if not forloop.last %}{% endif %}
                                 {% empty %}
+                                    <!-- Optional empty state handling -->
                                 {% endfor %}
                             </td>
+                            
                             <td class="px-6 py-4 hidden md:table-cell">
                                 {% if musician.song %}
                                     <span class="text-[var(--primary-text)]">{{ musician.song.created_at|date:"d.m.Y" }}</span>
