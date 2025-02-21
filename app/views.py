@@ -105,13 +105,19 @@ def submit_song(request, unique_url):
         print("VIEW - POST Data:", request.POST)
 
         if form.is_valid():
-            print("VIEW - Form is valid")
             form.save()
-
-            # Refresh to verify
             musician.refresh_from_db()
-            print("VIEW - After save - Musician name:", musician.name)
-            print("VIEW - After save - Musician bio:", musician.bio)
+
+            email_message = f"Musikar: {musician.name}\nSong: {submission.song_title}\n\n{musician.bio}"
+
+            send_mail(
+                f'Songen.no: Ny songinnsending frå {musician.name}',
+                email_message,
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.CONTACT_EMAIL],
+                fail_silently=False,
+            )
+
 
             return render(request, 'submission_success.html')
         else:
