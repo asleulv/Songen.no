@@ -23,6 +23,8 @@
       {% endblock title %}
     </title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
     <script>
       // Always default to dark mode if no preference is saved
       const savedDarkMode = localStorage.getItem('dark-mode');
@@ -186,22 +188,26 @@
       </button>
     </div>
     <!-- Footer -->
-    <footer class="text-[var(--light-text)] mt-auto border-t border-[var(--light-border)] ">
-      <div class="container mx-auto px-4 py-8">
-        <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div class="flex items-center space-x-4">
-            <span class="text-[var(--secondary-accent)] font-bold text-xl">songen.no</span>
-            <a href="{% url 'contact' %}" class="text-[var(--light-text)]">
-              <span class="hover:text-[var(--primary-accent)] transition-colors duration-300">Laga av Asle</span>
-            </a>
-          </div>
-          <div class="flex space-x-6">
-            <a href="{% url 'terms' %}"
-               class="hover:text-[var(--primary-accent)] transition-colors duration-300">Vilkår for bruk</a>
+      <footer class="text-[var(--light-text)] mt-auto border-t border-[var(--light-border)]">
+        <div class="container mx-auto px-4 py-8">
+          <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div class="flex items-center space-x-4">
+              <span class="text-[var(--secondary-accent)] font-bold text-xl">songen.no</span>
+              <a href="{% url 'contact' %}" class="text-[var(--light-text)]">
+                <span class="hover:text-[var(--primary-accent)] transition-colors duration-300">Laga av Asle</span>
+              </a>
+            </div>
+            <div class="flex space-x-6">
+              <a href="{% url 'terms' %}" class="hover:text-[var(--primary-accent)] transition-colors duration-300">Vilkår for bruk</a>
+
+              <!-- RSS Icon Link -->
+              <a href="/rss/" class="hover:text-[var(--primary-accent)] transition-colors duration-300">
+                <i class="fa fa-rss" aria-hidden="true" title="RSS Feed"></i> <!-- Font Awesome RSS Icon -->
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
     <!-- JavaScript for mobile menu toggle -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
