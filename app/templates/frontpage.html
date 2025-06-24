@@ -68,47 +68,60 @@
   </div>
 
   <script>
-    let currentPage = {{ page_obj.number }};
-    let hasNext = {{ page_obj.has_next|yesno:"true,false" }};
-    let loading = false;
+  let currentPage = {{ page_obj.number }};
+  let hasNext = {{ page_obj.has_next|yesno:"true,false" }};
+  let loading = false;
 
-    function loadMoreSongs() {
-      if (loading || !hasNext) return;
-      
-      loading = true;
-      document.getElementById('loading').classList.remove('hidden');
-      
-      fetch(`?page=${currentPage + 1}`)
-        .then(response => response.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const newSongs = doc.querySelectorAll('#songs-container > a');
-          const container = document.getElementById('songs-container');
-          
-          newSongs.forEach(song => {
-            container.appendChild(song);
-          });
-          
-          currentPage++;
-          hasNext = doc.querySelector('script').textContent.includes('has_next') && 
-                   doc.querySelector('script').textContent.includes('true');
-          
-          loading = false;
-          document.getElementById('loading').classList.add('hidden');
-        })
-        .catch(error => {
-          console.error('Error loading more songs:', error);
-          loading = false;
-          document.getElementById('loading').classList.add('hidden');
-        });
-    }
-
-    // Infinite scroll
-    window.addEventListener('scroll', () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
-        loadMoreSongs();
+  function loadMoreSongs() {
+    if (loading || !hasNext) return;
+    
+    loading = true;
+    document.getElementById('loading').classList.remove('hidden');
+    
+    fetch(`?page=${currentPage + 1}`, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
       }
-    });
-  </script>
+    })
+      .then(response => response.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const newSongs = doc.querySelectorAll('#songs-container a');
+        const container = document.getElementById('songs-container');
+        
+        newSongs.forEach(song => {
+          container.appendChild(song.cloneNode(true));
+        });
+        
+        currentPage++;
+        
+        // Check if there are more pages by looking for has_next in the new response
+        const scriptContent = doc.querySelector('script') ? doc.querySelector('script').textContent : '';
+        hasNext = scriptContent.includes('hasNext = true');
+        
+        loading = false;
+        document.getElementById('loading').classList.add('hidden');
+      })
+      .catch(error => {
+        console.error('Error loading more songs:', error);
+        loading = false;
+        document.getElementById('loading').classList.add('hidden');
+      });
+  }
+
+  // Infinite scroll - trigger earlier
+  window.addEventListener('scroll', () => {
+    if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 500)) {
+      loadMoreSongs();
+    }
+  });
+
+  // Also trigger when page loads if content doesn't fill screen
+  window.addEventListener('load', () => {
+    if (document.body.scrollHeight <= window.innerHeight && hasNext) {
+      loadMoreSongs();
+    }
+  });
+</script>
 {% endblock content %}
