@@ -78,17 +78,15 @@
     loading = true;
     document.getElementById('loading').classList.remove('hidden');
     
-    fetch(`?page=${currentPage + 1}`, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    })
+    fetch(`?page=${currentPage + 1}`)
       .then(response => response.text())
       .then(html => {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        const newSongs = doc.querySelectorAll('#songs-container a');
+        const newSongs = doc.querySelectorAll('#songs-container > a');
         const container = document.getElementById('songs-container');
+        
+        console.log('Found new songs:', newSongs.length);
         
         newSongs.forEach(song => {
           container.appendChild(song.cloneNode(true));
@@ -96,49 +94,45 @@
         
         currentPage++;
         
-        // Check if there are more pages by looking for has_next in the new response
-        const scriptContent = doc.querySelector('script') ? doc.querySelector('script').textContent : '';
-        hasNext = scriptContent.includes('hasNext = true');
+        // Simple check: if we got fewer songs than expected, no more pages
+        hasNext = newSongs.length >= 6; // Assuming 6 per page
+        
+        console.log('Total cards now:', container.children.length);
+        console.log('Has next:', hasNext);
         
         loading = false;
         document.getElementById('loading').classList.add('hidden');
+        
+        // Keep loading if page still not full
+        setTimeout(() => {
+          if (document.body.scrollHeight <= window.innerHeight + 200 && hasNext) {
+            loadMoreSongs();
+          }
+        }, 100);
       })
       .catch(error => {
-        console.error('Error loading more songs:', error);
+        console.error('Error:', error);
         loading = false;
         document.getElementById('loading').classList.add('hidden');
       });
   }
 
-    console.log('Total cards loaded:', document.getElementById('songs-container').children.length);
-    console.log('Has next page:', hasNext);
-    console.log('Current page:', currentPage);
-
-    // Infinite scroll - trigger earlier
-    window.addEventListener('scroll', () => {
-    console.log('Scroll triggered');
-    console.log('ScrollY + innerHeight:', window.innerHeight + window.scrollY);
-    console.log('Body height - 1500:', document.body.offsetHeight - 1500);
-    
-    if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 1500)) {
-      console.log('Loading more...');
-      loadMoreSongs();
-    }
+  // Auto-load on page load if content doesn't fill screen
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (document.body.scrollHeight <= window.innerHeight + 200 && hasNext) {
+        console.log('Auto-loading content...');
+        loadMoreSongs();
+      }
+    }, 500);
   });
 
-// Force load more if content doesn't fill screen
-setTimeout(() => {
-  if (document.body.scrollHeight <= window.innerHeight + 100 && hasNext) {
-    console.log('Auto-loading more content...');
-    loadMoreSongs();
-  }
-}, 1000);
-
-  // Also trigger when page loads if content doesn't fill screen
-  window.addEventListener('load', () => {
-    if (document.body.scrollHeight <= window.innerHeight && hasNext) {
+  // Scroll trigger
+  window.addEventListener('scroll', () => {
+    if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 800)) {
       loadMoreSongs();
     }
   });
 </script>
+
 {% endblock content %}
