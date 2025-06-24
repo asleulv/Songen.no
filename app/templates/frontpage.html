@@ -110,16 +110,29 @@
       });
   }
 
-  console.log('Total cards loaded:', document.getElementById('songs-container').children.length);
-  console.log('Has next page:', hasNext);
-  console.log('Current page:', currentPage);
+    console.log('Total cards loaded:', document.getElementById('songs-container').children.length);
+    console.log('Has next page:', hasNext);
+    console.log('Current page:', currentPage);
 
-  // Infinite scroll - trigger earlier
-  window.addEventListener('scroll', () => {
+    // Infinite scroll - trigger earlier
+    window.addEventListener('scroll', () => {
+    console.log('Scroll triggered');
+    console.log('ScrollY + innerHeight:', window.innerHeight + window.scrollY);
+    console.log('Body height - 1500:', document.body.offsetHeight - 1500);
+    
     if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 1500)) {
+      console.log('Loading more...');
       loadMoreSongs();
     }
   });
+
+// Force load more if content doesn't fill screen
+setTimeout(() => {
+  if (document.body.scrollHeight <= window.innerHeight + 100 && hasNext) {
+    console.log('Auto-loading more content...');
+    loadMoreSongs();
+  }
+}, 1000);
 
   // Also trigger when page loads if content doesn't fill screen
   window.addEventListener('load', () => {
