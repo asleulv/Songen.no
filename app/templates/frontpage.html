@@ -110,9 +110,13 @@
       });
   }
 
+  console.log('Total cards loaded:', document.getElementById('songs-container').children.length);
+  console.log('Has next page:', hasNext);
+  console.log('Current page:', currentPage);
+
   // Infinite scroll - trigger earlier
   window.addEventListener('scroll', () => {
-    if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 500)) {
+    if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 1500)) {
       loadMoreSongs();
     }
   });
