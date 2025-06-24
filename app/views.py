@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from .forms import ContactForm
 from django.core.paginator import Paginator
@@ -30,6 +30,10 @@ def musician_list(request):
 
 def contact(request):
     if request.method == 'POST':
+
+        if request.POST.get('website'):
+            return redirect('contact')
+
         form = ContactForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data['name']
@@ -51,7 +55,6 @@ def contact(request):
     
     return render(request, 'contact.html', {'form': form})
 
-    return render(request, 'contact.html', {'form': form})
 
 def links(request):
     sitelinks = SiteLink.objects.all()

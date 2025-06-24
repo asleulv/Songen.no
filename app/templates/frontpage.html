@@ -12,9 +12,10 @@
         Når folk innan norsk musikk blir bedne om å trekke fram <span class="text-[var(--primary-accent)] font-bold">ein</span> song dei elskar. Enkelt og greitt, men samtidig utruleg vanskeleg...
       </p>
     </div>
+    
     <!-- Musician Info -->
     <div class="max-w-6xl mx-auto p-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div id="songs-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for song in page_obj %}
           {% if song.musician and song.musician.picture %}
             <a href="{{ song.get_absolute_url }}"
@@ -59,14 +60,55 @@
         {% endfor %}
       </div>
     </div>
-    <!-- See More Button -->
-    {% if page_obj.has_next %}
-      <div class="text-center mt-6">
-        <a href="?page={{ page_obj.next_page_number }}"
-           class="text-[var(--primary-text)] hover:text-[var(--highlighted-text)] bg-[var(--contrast-background)] px-4 py-2 rounded-full hover:bg-[var(--secondary-accent)] transition duration-300">
-           ➜
-        </a>
-      </div>
-    {% endif %}
+    
+    <!-- Loading indicator -->
+    <div id="loading" class="text-center mt-6 hidden">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--secondary-accent)]"></div>
+    </div>
   </div>
+
+  <script>
+    let currentPage = {{ page_obj.number }};
+    let hasNext = {{ page_obj.has_next|yesno:"true,false" }};
+    let loading = false;
+
+    function loadMoreSongs() {
+      if (loading || !hasNext) return;
+      
+      loading = true;
+      document.getElementById('loading').classList.remove('hidden');
+      
+      fetch(`?page=${currentPage + 1}`)
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newSongs = doc.querySelectorAll('#songs-container > a');
+          const container = document.getElementById('songs-container');
+          
+          newSongs.forEach(song => {
+            container.appendChild(song);
+          });
+          
+          currentPage++;
+          hasNext = doc.querySelector('script').textContent.includes('has_next') && 
+                   doc.querySelector('script').textContent.includes('true');
+          
+          loading = false;
+          document.getElementById('loading').classList.add('hidden');
+        })
+        .catch(error => {
+          console.error('Error loading more songs:', error);
+          loading = false;
+          document.getElementById('loading').classList.add('hidden');
+        });
+    }
+
+    // Infinite scroll
+    window.addEventListener('scroll', () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
+        loadMoreSongs();
+      }
+    });
+  </script>
 {% endblock content %}
