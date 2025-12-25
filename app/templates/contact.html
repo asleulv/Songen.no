@@ -11,6 +11,10 @@
       <div class="max-w-4xl text-left mx-auto bg-[var(--secondary-background)] p-6 rounded-lg shadow-lg mt-6">
         <form method="post">
           {% csrf_token %}
+          <!-- Hidden Field to reduce spam bots -->
+          <div style="display: none;">
+            <input type="text" name="website" />
+          </div>
           <!-- Name Field -->
           <div class="flex flex-col mb-4">
             <label for="name" class="text-md font-medium text-[var(--primary-text)]">Namn</label>
